@@ -1,0 +1,23 @@
+#######################################
+# Syntax Coloring Map For EvoLib
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+EvoExtruder	KEYWORD1
+EvoEndstop  KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+extrude	KEYWORD2
+pause	KEYWORD2
+check	KEYWORD2
+pressed KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
