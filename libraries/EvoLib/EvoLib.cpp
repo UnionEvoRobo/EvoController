@@ -19,7 +19,6 @@
             _pauseTime = pauseTime;
             _released = millis();
         }
-
         void EvoExtruder::extrude(){
             digitalWrite(_RELEASE_VALVE,LOW);
             digitalWrite(_INPUT_VALVE,HIGH);
@@ -50,16 +49,11 @@
             _pressed = false;
             pinMode(_pin,INPUT);
         }
-        void EvoEndstop::check(){
-            int read = digitalRead(_pin);
-            if(read == HIGH && millis() - _time > _debounce) {
-                _pressed = true;
-                _time = millis();
-            } else{
-                _pressed = false;
-            }
-        }
         bool EvoEndstop::pressed(){
-            return _pressed;
-            // will return
+            if(digitalRead(_pin) == HIGH && millis() - _time > _debounce) {
+                _time = millis();
+                return true;
+            } else {
+                return false;
+            }
         }

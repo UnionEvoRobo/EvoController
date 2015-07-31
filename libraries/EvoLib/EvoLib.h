@@ -26,7 +26,6 @@ class EvoEndstop
     public:
         EvoEndstop(int pin, long debounce);
         EvoEndstop(int pin);
-        void check();
         bool pressed();
     private:
         long _pin;

@@ -1,103 +1,105 @@
 #include <EvoLib.h>
 #include <AccelStepper.h>
 
+#include <avr/wdt.h>
 #include <stdio.h>
 #include <ctype.h>
 
 
-#define STEPS 200
-
-EvoExtruder extruder(300,4,5,6,7);
-//EvoMotor xMotor(40,41,42,43);
-//EvoMotor yMotor(51,52,53,54);
+//EXTUDER SETUP
+#define PAUSETIME 400
+EvoExtruder extruder(PAUSETIME,4,5,6,7);
 
 //MOTOR SETUP
+#define STEPS 200
 AccelStepper xStepper(AccelStepper::FULL4WIRE,53,51,49,47);
 AccelStepper yStepper(AccelStepper::FULL4WIRE,52,50,48,46);
-int xspeed = 0;
-int yspeed = 0;
+int xSpeed = 0;
+int ySpeed = 0;
 
-//ENDSTOP STUFF
-EvoEndstop x1(39);
-EvoEndstop x2(41);
-EvoEndstop y1(43);
-EvoEndstop y2(45);
+//ENDSTOP SETUP
+EvoEndstop x1(31);
+EvoEndstop x2(33);
+EvoEndstop y1(35);
+EvoEndstop y2(37);
 
-//OTHER
+//PARSING GLOBAL VARIABLES
 String input = "";
 
 void setup() {
+
+  //SERIAL SETUP
   Serial.begin(9600);
-  Serial.println("SETUP COMPLETE");
+  
   //MOTOR SETUP
   xStepper.setMaxSpeed(1000.0);
   yStepper.setMaxSpeed(1000.0);
   xStepper.setAcceleration(25.0);
   yStepper.setAcceleration(25.0);
-  xStepper.setSpeed(xspeed);
-  yStepper.setSpeed(yspeed);
-  //ENDSTOP SETUP
-  
+  xStepper.setSpeed(xSpeed);
+  yStepper.setSpeed(ySpeed);
+
+  Serial.println("S");  
 }
 
 void loop() {
+  //Read
   readSerial();
-  if(parse(input)){
-    input = "";
-  }
-  checkAll();
-  updateVelocities();
+
+  //Eval
+  input = parse(input);
+  
+  //Execute
+  extruder.check();
+  checkEndstopsAndAdjust();
   moveMotors();
 }
 
-void updateVelocities() {
+//If any of the endstops are pressed, multiply the velocity of the given axis by -1 (reversing it at full speed)
+void checkEndstopsAndAdjust() {
   if(x1.pressed() || x2.pressed()){
     Serial.println("--XX--");
-    Serial.println(x1.pressed());
-    Serial.println(x2.pressed());
-    xspeed = xspeed * -1;
-    xStepper.setSpeed(xspeed);
-  } else if (y1.pressed() || y2.pressed()) {
-    Serial.println("--YY--");
-    Serial.println(y1.pressed());
-    Serial.println(y2.pressed());
-    yspeed = yspeed * -1;
-    yStepper.setSpeed(yspeed);
+    xSpeed = xSpeed * -1;
+    xStepper.setSpeed(xSpeed);
   }
-}
-
-void checkAll() {
-  extruder.check();
-  x1.check();
-  x2.check();
-  y1.check();
-  y2.check();
+  if (y1.pressed() || y2.pressed()) {
+    Serial.println("--YY--");
+    ySpeed = ySpeed * -1;
+    yStepper.setSpeed(ySpeed);
+  }
 }
 
 //parses out a given command and updates the needed values
 //returns true iff a valid command has been executed
-bool parse(String input) {
+String parse(String inputStr) {
   if(input.length() == 8 && sanitizeMotorInstruction()){
-      Serial.println(input);
-      String xstr = input;
-      String ystr = input;
-      xstr.remove(4,4);
-      ystr.remove(0,4);
-      xspeed = xstr.toInt();
-      yspeed = ystr.toInt();
-      xStepper.setSpeed(xspeed);
-      yStepper.setSpeed(yspeed);
-      return true;
+      Serial.println(inputStr);
+      String xStr = inputStr;
+      String yStr = inputStr;
+      xStr.remove(4,4);
+      yStr.remove(0,4);
+      int xSpd = xStr.toInt();
+      int ySpd = yStr.toInt();
+      updateMotorSpeeds(xSpd,ySpd);
+      return "";
   } else if(input.length() == 8) {
-    return true;
+    //This case should not occur.
+    //Only returns true for testing so that it will reset on incorrect motor instruction inputs.
+    return "";
   } else if(input == "e"){ //activate extuder
     extruder.extrude();
-    return true;
+    return "";
   } else if(input == "p"){ //pause extruder
     extruder.pause();
-    return true;
+    return "";
+  } else if(input == "d") {
+    disablePrinter();
+    return "";  
+  } else if(input == "h") {
+    homePrinter();
+    return "";
   } else {
-  return false;
+    return inputStr;
   }
 }
 
@@ -109,6 +111,7 @@ void readSerial() {
 }
 
 //*********** MOTOR FUNCTIONS ************
+
 //Returns true iff the instruction is in the form '+100+100'
 bool sanitizeMotorInstruction() {
   if (input.length() == 8){
@@ -126,10 +129,78 @@ bool sanitizeMotorInstruction() {
   return false;
 }
 
+//Updates global speed variables and stepper speeds.
+void updateMotorSpeeds(int xSpd, int ySpd) {
+   updateXSpeed(xSpd);
+   updateYSpeed(ySpd);
+}
+void updateXSpeed(int xSpd){
+  xSpeed = xSpd;
+  xStepper.setSpeed(xSpeed);
+}
+void updateYSpeed(int ySpd){
+   ySpeed = ySpd;
+   yStepper.setSpeed(ySpeed);
+}
+
+//Steps each motor one step iff it should.
 void moveMotors() {
   xStepper.runSpeed();
   yStepper.runSpeed();
 }
-//*********** ENDSTOP FUNCTIONS ************
 
+//Resets printer to default state, unlocks motors awaiting next command.
+void disablePrinter() {
+  xStepper.disableOutputs();
+  yStepper.disableOutputs();
+  extruder.pause();
+  updateMotorSpeeds(0,0);
+  xStepper.enableOutputs();
+  yStepper.enableOutputs();
+}
+
+//"Homes" Printer to the center of the workable space.
+//TODO Clean this up. Repeated Code.
+void homePrinter() {
+  //HOME X AXIS
+  updateMotorSpeeds(-100,0);
+  while(!x1.pressed()){
+    xStepper.runSpeed();
+  }
+  updateXSpeed(100);
+  long startTime = millis();
+  while(!x2.pressed()){
+    xStepper.runSpeed();
+  }
+  long endTime = millis();
+  updateXSpeed(-100);
+  long runTime = ((endTime - startTime)/2) + millis();
+  //Serial.println("Start: " + (String)startTime + " EndTime: " + (String)endTime + " runTime: " + (String)runTime); 
+  while(millis() < runTime) {
+    xStepper.runSpeed();
+  }
+  updateXSpeed(0);
+
+  //HOME Y AXIS
+  updateMotorSpeeds(0,-100);
+  while(!y1.pressed()){
+    yStepper.runSpeed();
+  }
+  updateYSpeed(100);
+  startTime = millis();
+  while(!y2.pressed()) {
+    yStepper.runSpeed();
+  }
+  endTime = millis();
+  updateYSpeed(-100);
+  runTime = ((endTime - startTime)/2) + millis();
+  while(millis() < runTime){
+    yStepper.runSpeed();
+  }
+  updateYSpeed(0);
+
+  //DISABLE PRINTER AND SEND RESPONSE TO HOST
+  disablePrinter();
+  Serial.println('h');
+}
 
