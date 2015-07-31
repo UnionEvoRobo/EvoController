@@ -29,3 +29,6 @@
 *.exe
 *.out
 *.app
+
+#Sync Files (For Syncing to my Arduino Folder)
+sync.sh
