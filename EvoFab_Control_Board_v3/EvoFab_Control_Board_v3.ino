@@ -98,6 +98,9 @@ String parse(String inputStr) {
   } else if(input == "h") {
     homePrinter();
     return "";
+  } else if(input == "t"){
+    goToEval();
+    return "";
   } else {
     return inputStr;
   }
@@ -202,5 +205,34 @@ void homePrinter() {
   //DISABLE PRINTER AND SEND RESPONSE TO HOST
   disablePrinter();
   Serial.println('h');
+}
+
+void goToEval(){
+//HOME X AXIS
+  updateMotorSpeeds(-100,-100);
+
+  
+  while(!x1.pressed()){
+    xStepper.runSpeed();
+  }
+  xStepper.move(10);
+  while(xStepper.distanceToGo() != 0){
+    xStepper.run();
+  }
+
+  
+  while(!y1.pressed()){
+    yStepper.runSpeed();
+  }
+    yStepper.move(10);
+  while(yStepper.distanceToGo() != 0){
+    yStepper.run();
+  }
+  
+  updateMotorSpeeds(0,0);
+
+    //DISABLE PRINTER AND SEND RESPONSE TO HOST
+  disablePrinter();
+  Serial.println('t');
 }
 
