@@ -39,7 +39,7 @@ void setup() {
   xStepper.setSpeed(xSpeed);
   yStepper.setSpeed(ySpeed);
 
-  Serial.println("S");  
+  //Serial.println("S");  
 }
 
 void loop() {
@@ -58,12 +58,12 @@ void loop() {
 //If any of the endstops are pressed, multiply the velocity of the given axis by -1 (reversing it at full speed)
 void checkEndstopsAndAdjust() {
   if(x1.pressed() || x2.pressed()){
-    Serial.println("--XX--");
+    //Serial.println("--XX--");
     xSpeed = xSpeed * -1;
     xStepper.setSpeed(xSpeed);
   }
   if (y1.pressed() || y2.pressed()) {
-    Serial.println("--YY--");
+    //Serial.println("--YY--");
     ySpeed = ySpeed * -1;
     yStepper.setSpeed(ySpeed);
   }
@@ -73,7 +73,7 @@ void checkEndstopsAndAdjust() {
 //returns true iff a valid command has been executed
 String parse(String inputStr) {
   if(input.length() == 8 && sanitizeMotorInstruction()){
-      Serial.println(inputStr);
+      //Serial.println(inputStr);
       String xStr = inputStr;
       String yStr = inputStr;
       xStr.remove(4,4);
