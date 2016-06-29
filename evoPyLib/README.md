@@ -36,4 +36,4 @@ from evoPyLib import EvoController
  - bool ```.changeVelocity('string')```
     - takes in an 8 character string of the x and y velocities to set the motors in the form of 'XVELYVEL'
         - Ex. ```e.changeVelocity('+100-100')```
-    - returns true iff velocity string was 8 characters in length and command was successfully sent to the printer
+    - returns true iff velocity string was in valid form and command was successfully sent to the printer

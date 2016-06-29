@@ -1,9 +1,11 @@
 import time
 import serial
+import re
 
 class EvoController:
     """EvoFab Controller Class"""
     def __init__(self,serialPort):
+        self.pattern = re.compile("\A(\+|\-)\d\d\d(\+|\-)\d\d\d\Z")
         try:
             self.ser = serial.Serial(
             port = serialPort,
@@ -48,7 +50,7 @@ class EvoController:
                 return False
 
     def changeVelocity(self,velocity):
-                if len(velocity) == 8:
+                if self.pattern.match(velocity):
                     try:
                         self.ser.write(velocity)
                         return True
