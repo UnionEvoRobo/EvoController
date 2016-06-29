@@ -1,8 +1,9 @@
-Serial Control:
+# EvoFab Controller Libraries
 
-* change velocites: "+000+000"
-* Activate Extruder: 'e'
-* Pause Extrucer: 'p'
-* Disable Printer: 'd'
-* Home Printer: 'h', sends back 'h' when complete
-* Evaluate "Home": 't', sends back 't' when complete
+## SubDirectory Breakdown:
+- ArduinoFirmware
+    - Contains Firmware for EvoController and Input Array
+- evoPyLib
+    - A Python Library for controlling  the EvoController
+- scripts
+    - Demo Scripts for basic demo of Evo Controller Functionality
