@@ -68,7 +68,6 @@ class EvoController:
                 try:
                     self.ser.write('t')
                     ret = self.ser.read(1)
-                    print ret
                     if ret == 't':
                         return True
                 except Exception, e:
