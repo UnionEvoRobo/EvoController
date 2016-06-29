@@ -10,9 +10,11 @@ from evoPyLib import EvoController
  ```
 
  ### On close:
+
  Call ```e.close()```
 
  ### Available Functions:
+ 
  - bool ```.extrude()```
     - begins extruding of filament
     - returns true iff command was successfully sent to the printer
