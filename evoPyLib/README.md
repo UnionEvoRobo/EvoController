@@ -9,12 +9,12 @@ from evoPyLib import EvoController
  e = EvoController('/dev/ttyACM0') #param is the serial port of the controller
  ```
 
- ### On close:
+### On close:
 
  Call ```e.close()```
 
- ### Available Functions:
- 
+### Available Functions:
+
  - bool ```.extrude()```
     - begins extruding of filament
     - returns true iff command was successfully sent to the printer
