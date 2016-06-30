@@ -1,5 +1,6 @@
 import serial
 import re
+from time import sleep
 
 class EvoController:
     """EvoFab Controller Class"""
@@ -12,7 +13,8 @@ class EvoController:
             parity = serial.PARITY_NONE,
             stopbits = serial.STOPBITS_ONE,
             bytesize = serial.EIGHTBITS)
-        except SerialException:
+            sleep(1)
+        except serial.SerialException:
             import os
             print "Error connecting"
             os.exit(0)
@@ -77,3 +79,9 @@ class EvoController:
 
     def close(self):
         self.ser.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
