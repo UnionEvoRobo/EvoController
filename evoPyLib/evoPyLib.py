@@ -34,48 +34,49 @@ class EvoController:
         return True
 
     def pause(self):
-                try:
-                    self.ser.write('p')
-                except Exception, e:
-                    return False
-                return True
+        try:
+            self.ser.write('p')
+        except Exception, e:
+            return False
+        return True
+
     def home(self):
-                self.flush()
-                try:
-                    self.ser.write('h')
-                    ret = self.ser.read(1)
-                    if ret == 'h':
-                        return True
-                except Exception, e:
-                    return False
-                return False
+        self.flush()
+        try:
+            self.ser.write('h')
+            ret = self.ser.read(1)
+            if ret == 'h':
+                return True
+        except Exception, e:
+            return False
+        return False
 
     def changeVelocity(self,velocity):
-                if self.pattern.match(velocity):
-                    try:
-                        self.ser.write(velocity)
-                        return True
-                    except Exception, e:
-                        return False
+        if self.pattern.match(velocity):
+            try:
+                self.ser.write(velocity)
+                return True
+            except Exception, e:
                 return False
+        return False
 
     def disable(self):
-                try:
-                    self.ser.write('d')
-                    return True
-                except Exception, e:
-                    return False
+        try:
+            self.ser.write('d')
+            return True
+        except Exception, e:
+            return False
 
     def testHome(self):
-                self.flush()
-                try:
-                    self.ser.write('t')
-                    ret = self.ser.read(1)
-                    if ret == 't':
-                        return True
-                except Exception, e:
-                    return False
-                return False
+        self.flush()
+        try:
+            self.ser.write('t')
+            ret = self.ser.read(1)
+            if ret == 't':
+                return True
+        except Exception, e:
+            return False
+        return False
 
     def close(self):
         self.ser.close()
