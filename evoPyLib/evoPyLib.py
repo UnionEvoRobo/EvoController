@@ -1,5 +1,6 @@
 import serial
 import re
+import sys
 from time import sleep
 
 class EvoController:
@@ -27,6 +28,7 @@ class EvoController:
             pass
 
     def extrude(self):
+        self.flush()
         try:
             self.ser.write('e')
         except Exception, e:
@@ -34,6 +36,7 @@ class EvoController:
         return True
 
     def pause(self):
+        self.flush()
         try:
             self.ser.write('p')
         except Exception, e:
@@ -52,15 +55,20 @@ class EvoController:
         return False
 
     def changeVelocity(self,velocity):
+        self.flush()
         if self.pattern.match(velocity):
             try:
                 self.ser.write(velocity)
                 return True
             except Exception, e:
+                print e
                 return False
+        else:
+            print "pattern does not match"
         return False
 
     def disable(self):
+        self.flush()
         try:
             self.ser.write('d')
             return True
@@ -103,7 +111,7 @@ class EvoArray:
         except serial.SerialException:
             import os
             print "Error connecting"
-            os.exit(0)
+            sys.exit(0)
 
     def flush(self):
         try:
@@ -113,14 +121,13 @@ class EvoArray:
             pass
 
     def getNext(self):
-        try:
-            #self.flush()
-            line =  self.ser.readline()
-            code = "x =" + line
-            exec code
-            return x
-        except Exception, e:
-            pass
+        self.flush()
+        line =  self.ser.readline()
+        while not (len(line) == 35 and line[0] == '(' and line[-3] == ')'):
+            line = self.ser.readline()
+        code = "x =" + line
+        exec code
+        return x
 
     def close(self):
         self.ser.close()

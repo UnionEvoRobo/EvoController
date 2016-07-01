@@ -1,6 +1,7 @@
 # Repo Specific
 evoPyLib/demo
 evoPyLib/evoPyLib.pyc
+*.swp
 
 # Because OSX Sucks
 *.DS_Store
