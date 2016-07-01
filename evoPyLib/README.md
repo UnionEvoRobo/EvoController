@@ -2,18 +2,20 @@
 
 ## How To Use:
 
-### Creating a Controller:
+### EvoController:
+
+#### Creating a Controller:
 
 ```python
 from evoPyLib import EvoController
  e = EvoController('/dev/ttyACM0') #param is the serial port of the controller
  ```
 
-### On close:
+#### On close:
 
  Call ```e.close()```
 
-### Available Functions:
+#### Available Functions:
 
  - bool ```.extrude()```
     - begins extruding of filament
@@ -37,3 +39,21 @@ from evoPyLib import EvoController
     - takes in an 8 character string of the x and y velocities to set the motors in the form of 'XVELYVEL'
         - Ex. ```e.changeVelocity('+100-100')```
     - returns true iff velocity string was in valid form and command was successfully sent to the printer
+
+### EvoArray:
+
+#### Creating an Array:
+
+```python
+from evoPyLib import EvoArray
+ e = EvoArray('/dev/ttyACM0') #param is the serial port of the controller
+ ```
+
+#### On close:
+
+ Call ```e.close()```
+
+#### Available Functions:
+
+ - tuple ```.getNext()```
+    - returns an 8-tuple of the current values of the photo resistor array
