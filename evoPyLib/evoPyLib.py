@@ -15,9 +15,9 @@ class EvoController:
             bytesize = serial.EIGHTBITS)
             sleep(1)
         except serial.SerialException:
-            import os
+            import sys
             print "Error connecting"
-            os.exit(0)
+            sys.exit(0)
 
     def flush(self):
         try:
