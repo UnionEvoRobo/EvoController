@@ -56,4 +56,4 @@ from evoPyLib import EvoArray
 #### Available Functions:
 
  - tuple ```.getNext()```
-    - returns an 8-tuple of the current values of the photo resistor array
+    - returns an 8-tuple of the current values of the photo resistor array (values are integers)
