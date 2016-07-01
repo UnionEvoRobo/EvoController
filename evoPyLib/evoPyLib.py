@@ -115,7 +115,10 @@ class EvoArray:
     def getNext(self):
         try:
             #self.flush()
-            return self.ser.readline()
+            line =  self.ser.readline()
+            code = "x =" + line
+            exec code
+            return x
         except Exception, e:
             pass
 
