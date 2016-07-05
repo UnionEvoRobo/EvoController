@@ -30,7 +30,7 @@ void setup() {
 
   //SERIAL SETUP
   Serial.begin(9600);
-  
+
   //MOTOR SETUP
   xStepper.setMaxSpeed(1000.0);
   yStepper.setMaxSpeed(1000.0);
@@ -39,7 +39,7 @@ void setup() {
   xStepper.setSpeed(xSpeed);
   yStepper.setSpeed(ySpeed);
 
-  //Serial.println("S");  
+  //Serial.println("S");
 }
 
 void loop() {
@@ -48,7 +48,7 @@ void loop() {
 
   //Eval
   input = parse(input);
-  
+
   //Execute
   extruder.check();
   checkEndstopsAndAdjust();
@@ -94,7 +94,7 @@ String parse(String inputStr) {
     return "";
   } else if(input == "d") {
     disablePrinter();
-    return "";  
+    return "";
   } else if(input == "h") {
     homePrinter();
     return "";
@@ -178,7 +178,7 @@ void homePrinter() {
   long endTime = millis();
   updateXSpeed(-100);
   long runTime = ((endTime - startTime)/2) + millis();
-  //Serial.println("Start: " + (String)startTime + " EndTime: " + (String)endTime + " runTime: " + (String)runTime); 
+  //Serial.println("Start: " + (String)startTime + " EndTime: " + (String)endTime + " runTime: " + (String)runTime);
   while(millis() < runTime) {
     xStepper.runSpeed();
   }
@@ -204,14 +204,15 @@ void homePrinter() {
 
   //DISABLE PRINTER AND SEND RESPONSE TO HOST
   disablePrinter();
-  Serial.println('h');
+  Serial.print('h');
+  Serial.flush()
 }
 
 void goToEval(){
 //HOME X AXIS
   updateMotorSpeeds(-100,-100);
 
-  
+
   while(!x1.pressed()){
     xStepper.runSpeed();
   }
@@ -220,7 +221,7 @@ void goToEval(){
     xStepper.run();
   }
 
-  
+
   while(!y1.pressed()){
     yStepper.runSpeed();
   }
@@ -228,11 +229,11 @@ void goToEval(){
   while(yStepper.distanceToGo() != 0){
     yStepper.run();
   }
-  
+
   updateMotorSpeeds(0,0);
 
     //DISABLE PRINTER AND SEND RESPONSE TO HOST
   disablePrinter();
-  Serial.println('t');
+  Serial.print('t');
+  Serial.flush()
 }
-
