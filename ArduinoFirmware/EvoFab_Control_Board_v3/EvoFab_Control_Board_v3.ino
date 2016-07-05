@@ -205,7 +205,6 @@ void homePrinter() {
   //DISABLE PRINTER AND SEND RESPONSE TO HOST
   disablePrinter();
   Serial.print('h');
-  Serial.flush()
 }
 
 void goToEval(){
@@ -235,5 +234,4 @@ void goToEval(){
     //DISABLE PRINTER AND SEND RESPONSE TO HOST
   disablePrinter();
   Serial.print('t');
-  Serial.flush()
 }
