@@ -3,6 +3,13 @@ import re
 import sys
 from time import sleep
 
+
+class EvoError(Exception):
+    def __init__(self,value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
 class EvoController:
     """EvoFab Controller Class"""
     def __init__(self,serialPort):
@@ -10,13 +17,12 @@ class EvoController:
         try:
             self.ser = serial.Serial(
             port = serialPort,
-            baudrate =9600,
+            baudrate = 9600,
             parity = serial.PARITY_NONE,
             stopbits = serial.STOPBITS_ONE,
             bytesize = serial.EIGHTBITS)
             sleep(1)
         except serial.SerialException:
-            import sys
             print "Error connecting"
             sys.exit(0)
 
@@ -25,14 +31,14 @@ class EvoController:
             self.ser.flushInput()
             self.ser.flushOutput()
         except Exception, e:
-            pass
+            raise EvoError("Error Flushing Serial")
 
     def extrude(self):
         self.flush()
         try:
             self.ser.write('e')
         except Exception, e:
-            return False
+            raise EvoError("Error Issuing Extrude Command")
         return True
 
     def pause(self):
@@ -40,7 +46,7 @@ class EvoController:
         try:
             self.ser.write('p')
         except Exception, e:
-            return False
+            raise EvoError("Error Issuing Pause Command")
         return True
 
     def home(self):
@@ -51,8 +57,8 @@ class EvoController:
             if ret == 'h':
                 return True
         except Exception, e:
-            return False
-        return False
+            raise EvoError("Error sending or recieving home command")
+        raise EvoError("Controller Error, expected home aknoledgement, got" + ret)
 
     def changeVelocity(self,velocity):
         self.flush()
@@ -62,10 +68,9 @@ class EvoController:
                 return True
             except Exception, e:
                 print e
-                return False
+                raise EvoError("Error sending velocity command to printer")
         else:
-            print "pattern does not match"
-        return False
+            raise EvoError("Incorrect velocity inputed to changeVelocity")
 
     def disable(self):
         self.flush()
@@ -73,7 +78,7 @@ class EvoController:
             self.ser.write('d')
             return True
         except Exception, e:
-            return False
+            EvoError("Error issuing disable command")
 
     def testHome(self):
         self.flush()
@@ -83,8 +88,8 @@ class EvoController:
             if ret == 't':
                 return True
         except Exception, e:
-            return False
-        return False
+            raise EvoError("Serial Error while testHoming")
+        raise EvoError("Controller error while testHoming, expected responce 't', recieved " + ret)
 
     def close(self):
         self.ser.close()
