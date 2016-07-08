@@ -16,9 +16,9 @@ class EvoCamera:
     def __init__(self, camera, crop=True):
         self.camera = cv2.VideoCapture(camera)
         self.crop = crop
-        self.filenames = []
+        self.lastImage = None
 
-    def eval(self,saveImg=False,directory="data/images/"):
+    def eval(self):
         #grab static image
         junk,image = self.camera.read()
 
@@ -26,26 +26,27 @@ class EvoCamera:
         if self.crop:
             image = Crop(image)
 
-        #Process Image to create black white image
+        #Evaluate Image
         fitness,processedImage = evaluate(image)
 
-        #TODO SAVE IMAGE IF requested
-        if saveImg:
-            saveImage(fitness,processedImage,directory)
+        #Set lastImage to processedImage
+        self.lastImage = processedImage
 
         #generate output numbers based on griding
         #and return
         return fitness
 
     def evalImg(self,path,crop = False, saveImg = False):
+        #TODO Implement.
 
+    def saveImage(self, filename="image.jpg"):
+        if self.lastImage:
+            #TODO Save image using filename
 
     #Releases the camera from OpenCV for use elsewhere.
     #**Object is no longer functional once this is called**
     def closeCamera(self):
         self.camera.release()
-
-    def saveImage(self, fitness,image,directory): 
 
 #MAIN PROCESSING CODE
 
