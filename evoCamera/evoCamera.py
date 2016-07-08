@@ -16,6 +16,7 @@ class EvoCamera:
     def __init__(self, camera, crop=True):
         self.camera = cv2.VideoCapture(camera)
         self.crop = crop
+        self.filenames = []
 
     def eval(self,saveImg=False,directory="data/images/"):
         #grab static image
@@ -44,10 +45,9 @@ class EvoCamera:
     def closeCamera(self):
         self.camera.release()
 
+    def saveImage(self, fitness,image,directory): 
 
 #MAIN PROCESSING CODE
-def saveImage(fitness,image,directory):
-    #TODO
 
 def Crop(image):
     sy = 80
