@@ -172,8 +172,7 @@ if __name__ == '__main__':
         pass
 
     # When everything done or user quits, release the capture
-    if args["camera"]:
-        camera.close()
+    e.closeCamera()
     cv2.destroyAllWindows()
     sys.exit()
 
