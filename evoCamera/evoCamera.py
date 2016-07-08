@@ -36,8 +36,24 @@ class EvoCamera:
         #and return
         return fitness
 
-    def evalImg(self,path,crop = False, saveImg = False):
-        #TODO Implement.
+    def evalImg(self,path,crop = False):
+        #get image
+        image = cv2.imread(path)
+
+        #crop the image to a square if requested
+        if crop:
+            image = Crop(image)
+
+        #Evaluate Image
+        fitness,processedImage = evaluate(image)
+
+        #Set lastImage to processedImage
+        self.lastImage = processedImage
+
+        #generate output numbers based on griding
+        #and return
+        return fitness
+
 
     def saveImage(self, filename="image.jpg"):
         if self.lastImage:
@@ -121,19 +137,13 @@ if __name__ == '__main__':
         ap.add_argument("-r", "--crop",action='store_true', help = "crops image")
         args = vars(ap.parse_args())
 
-        #grab image
+        #Create an EvoCamera, evaluate
         if args["camera"]:
-            camera = cv2.VideoCapture(int(args["camera"]))
-            ret,image = camera.read()
+            e = EvoCamera(int(args["camera"]),args["crop"])
+            fitness,eval_image = e.eval()
         else:
-            image = cv2.imread(args["image"])
-
-        #crop if requested
-        if args["crop"]:
-            image = Crop(image)
-
-        #evaluate images
-        fitness,eval_image = evaluate(image)
+            e = EvoCamera(0,args["crop"])
+            fitness,eval_image = e.evalImg(args["image"])
 
         #Display a visual represntation of detection if requested
         if args["visual"]:
