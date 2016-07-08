@@ -56,7 +56,7 @@ class EvoCamera:
 
 
     def saveImage(self, filename='image.png'):
-        if self.lastImage:
+        if self.lastImage is not None:
             cv2.imwrite(filename, self.lastImage)
 
     #Releases the camera from OpenCV for use elsewhere.
@@ -135,15 +135,19 @@ if __name__ == '__main__':
         ap.add_argument("-v", "--visual",action='store_true', help = "Display visual feedback.")
         ap.add_argument("-p", "--print",action='store_true', help = "Print fitness value to console.")
         ap.add_argument("-r", "--crop",action='store_true', help = "crops image")
+        ap.add_argument("-s", "--save", help = "name to save eval image as")
         args = vars(ap.parse_args())
 
         #Create an EvoCamera, evaluate
         if args["camera"]:
             e = EvoCamera(int(args["camera"]),args["crop"])
-            fitness,eval_image = e.eval()
+            fitness = e.eval()
         else:
             e = EvoCamera(0,args["crop"])
-            fitness,eval_image = e.evalImg(args["image"])
+            fitness = e.evalImg(args["image"],crop = args["crop"])
+
+        #grab eval image
+        eval_image = e.lastImage
 
         #Display a visual represntation of detection if requested
         if args["visual"]:
@@ -152,6 +156,10 @@ if __name__ == '__main__':
         #return color percentages
         if args["print"]:
             print(fitness)
+
+        #save image if requested
+        if args["save"]:
+            e.saveImage(args["save"])
 
         #if displaying image wait until user is done
         if args["visual"]:
