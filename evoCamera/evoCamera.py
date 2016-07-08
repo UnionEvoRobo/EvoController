@@ -55,9 +55,9 @@ class EvoCamera:
         return fitness
 
 
-    def saveImage(self, filename="image.jpg"):
+    def saveImage(self, filename='image.png'):
         if self.lastImage:
-            #TODO Save image using filename
+            cv2.imwrite(filename, self.lastImage)
 
     #Releases the camera from OpenCV for use elsewhere.
     #**Object is no longer functional once this is called**
