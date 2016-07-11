@@ -59,6 +59,10 @@ class EvoCamera:
         if self.lastImage is not None:
             cv2.imwrite(filename, self.lastImage)
 
+    def showImage(self):
+        if self.lastImage is not None:
+            cv2.imshow("EvoFab Evaluation", self.lastImage)
+
     #Releases the camera from OpenCV for use elsewhere.
     #**Object is no longer functional once this is called**
     def closeCamera(self):
