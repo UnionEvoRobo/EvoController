@@ -61,6 +61,7 @@ class EvoCamera:
 
     def showImage(self):
         if self.lastImage is not None:
+            cv2.destroyAllWindows()
             cv2.imshow("EvoFab Evaluation", self.lastImage)
 
     #Releases the camera from OpenCV for use elsewhere.
