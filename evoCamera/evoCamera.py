@@ -87,7 +87,7 @@ def evaluate(image):
     #cv2.imshow("Edges", edged)
 
     # Find contours in the edged image.
-    (cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    (_,cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     #sort them largest to smallest
     cnts = sorted(cnts, key = cv2.contourArea, reverse = True)
