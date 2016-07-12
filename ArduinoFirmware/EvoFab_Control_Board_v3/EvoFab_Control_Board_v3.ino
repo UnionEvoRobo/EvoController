@@ -5,6 +5,11 @@
 #include <stdio.h>
 #include <ctype.h>
 
+//SOFTWARE END LIMITS
+#define XLIMIT 697
+#define YLIMIT 621
+#define TESTHOMEXBOUNCE 25
+#define TESTHOMEYBOUNCE 10
 
 //EXTUDER SETUP
 #define PAUSETIME 400
@@ -148,8 +153,25 @@ void updateYSpeed(int ySpd){
 
 //Steps each motor one step iff it should.
 void moveMotors() {
-  xStepper.runSpeed();
-  yStepper.runSpeed();
+  if(xStepper.currentPosition() < XLIMIT && xStepper.speed() > 0){
+    xStepper.runSpeed();
+  } else if(xStepper.currentPosition() > 0 && xStepper.speed() < 0){
+    xStepper.runSpeed();
+  }
+
+  if(yStepper.currentPosition() < YLIMIT && yStepper.speed() > 0){
+    yStepper.runSpeed();
+  } else if(yStepper.currentPosition() > 0 && yStepper.speed() < 0){
+    yStepper.runSpeed();
+  }
+
+//  
+//  xStepper.runSpeed();
+//  yStepper.runSpeed();
+//  Serial.print("x pos: ");
+//  Serial.println(xStepper.currentPosition());
+//  Serial.print("y pos: ");
+//  Serial.println(yStepper.currentPosition());
 }
 
 //Resets printer to default state, unlocks motors awaiting next command.
@@ -215,7 +237,7 @@ void goToEval(){
   while(!x1.pressed()){
     xStepper.runSpeed();
   }
-  xStepper.move(10);
+  xStepper.move(TESTHOMEXBOUNCE);
   while(xStepper.distanceToGo() != 0){
     xStepper.run();
   }
@@ -224,7 +246,7 @@ void goToEval(){
   while(!y1.pressed()){
     yStepper.runSpeed();
   }
-    yStepper.move(10);
+    yStepper.move(TESTHOMEYBOUNCE);
   while(yStepper.distanceToGo() != 0){
     yStepper.run();
   }
@@ -232,6 +254,8 @@ void goToEval(){
   updateMotorSpeeds(0,0);
 
     //DISABLE PRINTER AND SEND RESPONSE TO HOST
+  xStepper.setCurrentPosition(0);
+  yStepper.setCurrentPosition(0);
   disablePrinter();
   Serial.print('t');
 }
