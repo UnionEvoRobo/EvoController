@@ -14,13 +14,20 @@ import sys
 #           iff crop == True (Defaults to True)
 class EvoCamera:
     def __init__(self, camera, crop=True):
-        self.camera = cv2.VideoCapture(camera)
+        self.camera = camera
         self.crop = crop
         self.lastImage = None
+        self.ramp_frames = 30
+
 
     def eval(self):
+        #setup video capture
+        cap = cv2.VideoCapture(camera)
+
         #grab static image
-        junk,image = self.camera.read()
+        # Ramp the camera - to adjust to light levels, if necessary
+        for i in xrange(self.ramp_frames):
+            junk,image = cap.read()
 
         #crop the image to a square if requested
         if self.crop:
@@ -31,6 +38,9 @@ class EvoCamera:
 
         #Set lastImage to processedImage
         self.lastImage = processedImage
+
+        #release the camera for next use
+        del(cap)
 
         #generate output numbers based on griding
         #and return
