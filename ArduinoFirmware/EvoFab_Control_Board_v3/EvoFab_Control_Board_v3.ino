@@ -5,6 +5,11 @@
 #include <stdio.h>
 #include <ctype.h>
 
+//SOFTWARE END LIMITS
+#define XLIMIT 697
+#define YLIMIT 621
+#define TESTHOMEXBOUNCE 25
+#define TESTHOMEYBOUNCE 10
 
 //EXTUDER SETUP
 #define PAUSETIME 400
@@ -99,7 +104,7 @@ String parse(String inputStr) {
     homePrinter();
     return "";
   } else if(input == "t"){
-    goToEval();
+    goToEval(true);
     return "";
   } else {
     return inputStr;
@@ -148,8 +153,17 @@ void updateYSpeed(int ySpd){
 
 //Steps each motor one step iff it should.
 void moveMotors() {
-  xStepper.runSpeed();
-  yStepper.runSpeed();
+  if(xStepper.currentPosition() < XLIMIT && xStepper.speed() > 0){
+    xStepper.runSpeed();
+  } else if(xStepper.currentPosition() > 0 && xStepper.speed() < 0){
+    xStepper.runSpeed();
+  }
+
+  if(yStepper.currentPosition() < YLIMIT && yStepper.speed() > 0){
+    yStepper.runSpeed();
+  } else if(yStepper.currentPosition() > 0 && yStepper.speed() < 0){
+    yStepper.runSpeed();
+  }
 }
 
 //Resets printer to default state, unlocks motors awaiting next command.
@@ -163,51 +177,28 @@ void disablePrinter() {
 }
 
 //"Homes" Printer to the center of the workable space.
-//TODO Clean this up. Repeated Code.
 void homePrinter() {
-  //HOME X AXIS
-  updateMotorSpeeds(-100,0);
-  while(!x1.pressed()){
-    xStepper.runSpeed();
-  }
-  updateXSpeed(100);
-  long startTime = millis();
-  while(!x2.pressed()){
-    xStepper.runSpeed();
-  }
-  long endTime = millis();
-  updateXSpeed(-100);
-  long runTime = ((endTime - startTime)/2) + millis();
-  //Serial.println("Start: " + (String)startTime + " EndTime: " + (String)endTime + " runTime: " + (String)runTime);
-  while(millis() < runTime) {
-    xStepper.runSpeed();
-  }
-  updateXSpeed(0);
+  //Send printer to bottom right hand corner
+  goToEval(false);
 
-  //HOME Y AXIS
-  updateMotorSpeeds(0,-100);
-  while(!y1.pressed()){
-    yStepper.runSpeed();
+  //move printer to center of software limits
+  yStepper.move(YLIMIT/2);
+  xStepper.move(XLIMIT/2);
+  while(xStepper.distanceToGo() != 0 || yStepper.distanceToGo() != 0){
+      if(xStepper.distanceToGo() != 0){
+        xStepper.run();
+      }
+      if(yStepper.distanceToGo() != 0){
+        yStepper.run();
+      }
   }
-  updateYSpeed(100);
-  startTime = millis();
-  while(!y2.pressed()) {
-    yStepper.runSpeed();
-  }
-  endTime = millis();
-  updateYSpeed(-100);
-  runTime = ((endTime - startTime)/2) + millis();
-  while(millis() < runTime){
-    yStepper.runSpeed();
-  }
-  updateYSpeed(0);
 
   //DISABLE PRINTER AND SEND RESPONSE TO HOST
   disablePrinter();
   Serial.print('h');
 }
 
-void goToEval(){
+void goToEval(bool confirm){
 //HOME X AXIS
   updateMotorSpeeds(-100,-100);
 
@@ -215,7 +206,7 @@ void goToEval(){
   while(!x1.pressed()){
     xStepper.runSpeed();
   }
-  xStepper.move(10);
+  xStepper.move(TESTHOMEXBOUNCE);
   while(xStepper.distanceToGo() != 0){
     xStepper.run();
   }
@@ -224,7 +215,7 @@ void goToEval(){
   while(!y1.pressed()){
     yStepper.runSpeed();
   }
-    yStepper.move(10);
+    yStepper.move(TESTHOMEYBOUNCE);
   while(yStepper.distanceToGo() != 0){
     yStepper.run();
   }
@@ -232,6 +223,10 @@ void goToEval(){
   updateMotorSpeeds(0,0);
 
     //DISABLE PRINTER AND SEND RESPONSE TO HOST
+  xStepper.setCurrentPosition(0);
+  yStepper.setCurrentPosition(0);
   disablePrinter();
-  Serial.print('t');
+  if(confirm){
+      Serial.print('t');
+  }
 }
