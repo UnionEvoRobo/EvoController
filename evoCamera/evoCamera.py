@@ -37,6 +37,8 @@ class EvoCamera:
         fitness,processedImage = evaluate(image)
 
         #Set lastImage to processedImage
+        if self.lastImage != None:
+            assert(not np.array_equal(self.lastImage,processedImage)) #make sure that the camera is reading a new image
         self.lastImage = processedImage
 
         #release the camera for next use
@@ -71,8 +73,12 @@ class EvoCamera:
 
     def showImage(self):
         if self.lastImage is not None:
-            cv2.destroyAllWindows()
+            #try:
+            #    cv2.destroyAllWindows()
+            #except:
+            #    print("failed destroying window")
             cv2.imshow("EvoFab Evaluation", self.lastImage)
+            cv2.waitKey(1)
 
     #Releases the camera from OpenCV for use elsewhere.
     #**Object is no longer functional once this is called**
@@ -82,10 +88,11 @@ class EvoCamera:
 #MAIN PROCESSING CODE
 
 def Crop(image):
-    sy = 80
-    dy = 650
-    sx = 330
-    dx = 610
+#dimensions are 640x480
+    sy = 45
+    dy = 480 - 136 -45
+    sx = 170
+    dx = 640 - 175 - 170
     return image[sy:sy+dy, sx:sx+dx]
 
 def evaluate(image):
@@ -108,6 +115,9 @@ def evaluate(image):
     cnts = sorted(cnts, key = cv2.contourArea, reverse = True)
 
     #calculate the peremiter
+    #if there are no visible contours in the image, return a fitness of 0
+    if len(cnts) == 0:
+        return 0
     perimeter = cv2.arcLength(cnts[0], True)
 
     #find the convexHull
@@ -161,12 +171,9 @@ if __name__ == '__main__':
             e = EvoCamera(0,args["crop"])
             fitness = e.evalImg(args["image"],crop = args["crop"])
 
-        #grab eval image
-        eval_image = e.lastImage
-
         #Display a visual represntation of detection if requested
         if args["visual"]:
-            cv2.imshow('EvoFab: Fitness Evaluator',eval_image)
+            e.showImage()
 
         #return color percentages
         if args["print"]:
