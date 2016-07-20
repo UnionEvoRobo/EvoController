@@ -142,3 +142,44 @@ class EvoArray:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
+class EvoConveyor:
+    """EvoFab Conveyor Bed Class"""
+    def __init__(self,serialPort,runTime=10):
+        self.runTime = runTime
+        try:
+            self.ser = serial.Serial(
+            port = serialPort,
+            baudrate =9600,
+            parity = serial.PARITY_NONE,
+            stopbits = serial.STOPBITS_ONE,
+            bytesize = serial.EIGHTBITS)
+            sleep(1)
+            self.ser.write("GO")
+        except serial.SerialException:
+            import os
+            print "Error connecting"
+            sys.exit(0)
+
+    def flush(self):
+        try:
+            self.ser.flushInput()
+            self.ser.flushOutput()
+        except Exception, e:
+            pass
+
+    def run(self):
+        self.flush()
+        self.ser.write("R3200")
+        sleep(runTime)
+        self.ser.write("B0")
+        return
+
+    def close(self):
+        self.ser.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
