@@ -155,7 +155,7 @@ class EvoConveyor:
             stopbits = serial.STOPBITS_ONE,
             bytesize = serial.EIGHTBITS)
             sleep(1)
-            self.ser.write('GO\n'.encode('ascii'))
+            self.ser.write("GO\n")
         except serial.SerialException:
             import os
             print "Error connecting"
@@ -170,9 +170,9 @@ class EvoConveyor:
 
     def run(self):
         self.flush()
-        self.ser.write('R3200\n'.encode('ascii'))
+        self.ser.write("R3200\n")
         sleep(self.runTime)
-        self.ser.write('B0'.encode('ascii'))
+        self.ser.write("B0\n")
         return
 
     def close(self):
