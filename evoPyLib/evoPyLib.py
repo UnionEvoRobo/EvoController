@@ -171,7 +171,7 @@ class EvoConveyor:
     def run(self):
         self.flush()
         self.ser.write("R3200")
-        sleep(runTime)
+        sleep(self.runTime)
         self.ser.write("B0")
         return
 
