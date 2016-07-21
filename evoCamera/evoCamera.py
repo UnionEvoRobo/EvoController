@@ -22,7 +22,7 @@ class EvoCamera:
 
     def eval(self):
         #setup video capture
-        cap = cv2.VideoCapture(camera)
+        cap = cv2.VideoCapture(self.camera)
 
         #grab static image
         # Ramp the camera - to adjust to light levels, if necessary
