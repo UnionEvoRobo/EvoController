@@ -184,8 +184,8 @@ void homePrinter() {
   goToEval(false);
 
   //move printer to center of software limits
-  yStepper.move((YLIMITFAR - YLIMITNEAR) /2);
-  xStepper.move((XLIMITFAR - XLIMITNEAR) /2);
+  yStepper.moveTo((YLIMITFAR - YLIMITNEAR) /2);
+  xStepper.moveTo((XLIMITFAR - XLIMITNEAR) /2);
   while(xStepper.distanceToGo() != 0 || yStepper.distanceToGo() != 0){
       if(xStepper.distanceToGo() != 0){
         xStepper.run();
