@@ -6,9 +6,9 @@
 #include <ctype.h>
 
 //SOFTWARE END LIMITS
-#define XLIMIT 697
-#define YLIMIT 621
-#define TESTHOMEXBOUNCE 25
+#define XLIMIT 687
+#define YLIMIT 591
+#define TESTHOMEXBOUNCE 35
 #define TESTHOMEYBOUNCE 10
 
 //EXTUDER SETUP
