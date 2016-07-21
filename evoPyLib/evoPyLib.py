@@ -92,6 +92,7 @@ class EvoController:
         raise EvoError("Controller error while testHoming, expected responce 't', recieved " + ret)
 
     def close(self):
+        self.disable()
         self.ser.close()
 
     def __enter__(self):
@@ -176,6 +177,7 @@ class EvoConveyor:
         return
 
     def close(self):
+        self.ser.write("B0\n")
         self.ser.close()
 
     def __enter__(self):
