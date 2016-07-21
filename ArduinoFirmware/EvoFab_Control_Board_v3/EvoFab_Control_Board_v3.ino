@@ -6,8 +6,10 @@
 #include <ctype.h>
 
 //SOFTWARE END LIMITS
-#define XLIMIT 687
-#define YLIMIT 581
+#define XLIMITFAR 687
+#define YLIMITFAR 581
+#define XLIMITNEAR 65
+#define YLIMITNEAR 65
 #define TESTHOMEXBOUNCE 35
 #define TESTHOMEYBOUNCE 10
 
@@ -153,15 +155,15 @@ void updateYSpeed(int ySpd){
 
 //Steps each motor one step iff it should.
 void moveMotors() {
-  if(xStepper.currentPosition() < XLIMIT && xStepper.speed() > 0){
+  if(xStepper.currentPosition() < XLIMITFAR && xStepper.speed() > 0){
     xStepper.runSpeed();
-  } else if(xStepper.currentPosition() > 0 && xStepper.speed() < 0){
+  } else if(xStepper.currentPosition() > XLIMITNEAR && xStepper.speed() < 0){
     xStepper.runSpeed();
   }
 
-  if(yStepper.currentPosition() < YLIMIT && yStepper.speed() > 0){
+  if(yStepper.currentPosition() < YLIMITFAR && yStepper.speed() > 0){
     yStepper.runSpeed();
-  } else if(yStepper.currentPosition() > 0 && yStepper.speed() < 0){
+  } else if(yStepper.currentPosition() > XLIMITNEAR && yStepper.speed() < 0){
     yStepper.runSpeed();
   }
 }
@@ -182,8 +184,8 @@ void homePrinter() {
   goToEval(false);
 
   //move printer to center of software limits
-  yStepper.move(YLIMIT/2);
-  xStepper.move(XLIMIT/2);
+  yStepper.move((YLIMITFAR - YLIMITNEAR) /2);
+  xStepper.move((XLIMITFAR - XLIMITNEAR) /2);
   while(xStepper.distanceToGo() != 0 || yStepper.distanceToGo() != 0){
       if(xStepper.distanceToGo() != 0){
         xStepper.run();
