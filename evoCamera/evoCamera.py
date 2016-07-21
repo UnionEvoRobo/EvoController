@@ -89,10 +89,10 @@ class EvoCamera:
 
 def Crop(image):
 #dimensions are 640x480
-    sy = 45
-    dy = 480 - 136 -45
-    sx = 170
-    dx = 640 - 175 - 170
+    sy = 60
+    dy = 480 - 190 - 60
+    sx = 150
+    dx = 642 - 190 - 150
     return image[sy:sy+dy, sx:sx+dx]
 
 def evaluate(image):
