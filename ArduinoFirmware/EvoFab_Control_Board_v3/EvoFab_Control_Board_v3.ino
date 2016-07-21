@@ -163,7 +163,7 @@ void moveMotors() {
 
   if(yStepper.currentPosition() < YLIMITFAR && yStepper.speed() > 0){
     yStepper.runSpeed();
-  } else if(yStepper.currentPosition() > XLIMITNEAR && yStepper.speed() < 0){
+  } else if(yStepper.currentPosition() > YLIMITNEAR && yStepper.speed() < 0){
     yStepper.runSpeed();
   }
 }
