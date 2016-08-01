@@ -185,3 +185,57 @@ class EvoConveyor:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
+
+class EvoZAxis:
+    """EvoFab Temporary Z-Axis Controller Class"""
+    def __init__(self,serialPort):
+        try:
+            self.ser = serial.Serial(
+            port = serialPort,
+            baudrate = 9600,
+            parity = serial.PARITY_NONE,
+            stopbits = serial.STOPBITS_ONE,
+            bytesize = serial.EIGHTBITS)
+            sleep(1)
+        except serial.SerialException:
+            print "Error connecting"
+            sys.exit(0)
+
+    def flush(self):
+        try:
+            self.ser.flushInput()
+            self.ser.flushOutput()
+        except Exception, e:
+            raise EvoError("Error Flushing Serial")
+
+    def up(self):
+        self.flush()
+        try:
+            self.ser.write('u')
+            ret = self.ser.read(1)
+            if ret == 'u':
+                return True
+        except Exception, e:
+            raise EvoError("Error sending or recieving up command")
+        raise EvoError("Z-Axis Error, expected up aknoledgement, got" + ret)
+
+    def down(self):
+        self.flush()
+        try:
+            self.ser.write('d')
+            ret = self.ser.read(1)
+            if ret == 'd':
+                return True
+        except Exception, e:
+            raise EvoError("Error sending or recieving down command")
+        raise EvoError("Z-Axis Error, expected down aknoledgement, got" + ret)
+
+    def close(self):
+        self.ser.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
