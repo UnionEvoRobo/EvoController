@@ -56,9 +56,13 @@ void readSerial() {
 
 //*********** MOTOR FUNCTIONS ************
 void raise(){
-  zStepper.move(-500);
-  while(zStepper.distanceToGo() != 0){
-    zStepper.run();
+  zStepper.setSpeed(-75);
+  int starttime = millis();
+  int endtime = starttime;
+  while ((endtime - starttime) <=20000) // do this loop for up to 1000mS
+  {
+    zStepper.runSpeed();
+    endtime = millis();
   }
   Serial.print('u');
 }
